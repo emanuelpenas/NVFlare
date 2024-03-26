@@ -274,7 +274,12 @@ class ServerEngine(ServerEngineInternalSpec):
         )
         # use os.setsid to create new process group ID
 
-        process = subprocess.Popen(shlex.split(command, True), preexec_fn=os.setsid, env=new_env)
+
+
+        if os.name == 'nt':
+            process = subprocess.Popen(command.split(), shell=True, env=new_env)
+        else:
+            process = subprocess.Popen(shlex.split(command, True), shell=True, env=new_env)
 
         if not job_id:
             job_id = ""

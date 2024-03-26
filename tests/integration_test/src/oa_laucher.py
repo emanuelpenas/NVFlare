@@ -34,9 +34,9 @@ class OALauncher:
 
         process = subprocess.Popen(
             command,
-            preexec_fn=os.setsid,
-            env=new_env,
-        )
+
+            env=new_env
+        , shell=True)
         print("Starting overseer ...")
         self._overseer_process = process
 

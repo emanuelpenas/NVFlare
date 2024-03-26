@@ -15,6 +15,7 @@
 import logging
 import os
 import shlex
+import signal
 import subprocess
 import sys
 import threading
@@ -200,7 +201,11 @@ class ProcessExecutor(ClientExecutor):
             " --set" + command_options + " print_conf=True"
         )
         # use os.setsid to create new process group ID
-        process = subprocess.Popen(shlex.split(command, True), preexec_fn=os.setsid, env=new_env)
+
+        if os.name == 'nt':
+            process = subprocess.Popen(command.split(), shell=True, env=new_env)
+        else:
+            process = subprocess.Popen(shlex.split(command, True), shell=True, env=new_env)
 
         self.logger.info("Worker child process ID: {}".format(process.pid))
 
@@ -393,7 +398,10 @@ class ProcessExecutor(ClientExecutor):
         if not done:
             self.logger.debug(f"still not done after {max_wait} secs")
             try:
-                os.killpg(os.getpgid(child_process.pid), 9)
+                if os.name == 'nt':
+                    os.kill(os.getpgid(child_process.pid), signal.SIGTERM)
+                else:
+                    os.killpg(os.getpgid(child_process.pid), 9)
                 self.logger.debug("kill signal sent")
             except:
                 pass

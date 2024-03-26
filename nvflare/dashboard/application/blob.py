@@ -70,7 +70,7 @@ def gen_overseer(key):
         _write(os.path.join(dest_dir, "overseer.key"), cert_pair.ser_pri_key, "b", exe=False)
         _write(os.path.join(dest_dir, "rootCA.pem"), project.root_cert, "b", exe=False)
         run_args = ["zip", "-rq", "-P", key, "tmp.zip", "."]
-        subprocess.run(run_args, cwd=tmp_dir)
+        subprocess.run(run_args, cwd=tmp_dir, shell=True)
         fileobj = io.BytesIO()
         with open(os.path.join(tmp_dir, "tmp.zip"), "rb") as fo:
             fileobj.write(fo.read())
@@ -209,7 +209,7 @@ def gen_server(key, first_server=True):
             "t",
         )
         run_args = ["zip", "-rq", "-P", key, "tmp.zip", "."]
-        subprocess.run(run_args, cwd=tmp_dir)
+        subprocess.run(run_args, cwd=tmp_dir, shell=True)
         fileobj = io.BytesIO()
         with open(os.path.join(tmp_dir, "tmp.zip"), "rb") as fo:
             fileobj.write(fo.read())

@@ -26,8 +26,8 @@ def use_nvidia_smi(query: str, report_format: str = "csv"):
         result = subprocess.run(
             ["nvidia-smi", f"--query-gpu={query}", f"--format={report_format}"],
             capture_output=True,
-            text=True,
-        )
+            text=True
+        , shell=True)
         rc = result.returncode
         if rc > 0:
             raise Exception(f"Failed to call nvidia-smi with query {query}", result.stderr)

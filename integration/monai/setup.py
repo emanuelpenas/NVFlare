@@ -53,6 +53,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: POSIX :: Linux",
+        "Operating System:: POSIX:: Windows",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",

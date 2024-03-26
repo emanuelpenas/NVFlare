@@ -247,7 +247,7 @@ def run_command_in_subprocess(command):
     new_env = os.environ.copy()
     process = subprocess.Popen(
         shlex.split(command),
-        preexec_fn=os.setsid,
+        shell=True,
         env=new_env,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,

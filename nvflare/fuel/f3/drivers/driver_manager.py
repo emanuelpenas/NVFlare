@@ -69,14 +69,20 @@ class DriverManager:
                 if filename.endswith(".py"):
                     module = filename[:-3]
                     sub_folder = root[len(folder) :]
+
                     if sub_folder:
-                        sub_folder = sub_folder.strip("/").replace("/", ".")
+                        if os.name == 'nt':
+                            sub_folder = sub_folder.strip("\\").replace("\\", ".")
+                        else:
+                            sub_folder = sub_folder.strip("/").replace("/", ".")
 
                     if sub_folder:
                         module = sub_folder + "." + module
 
                     if package:
                         module = package + "." + module
+
+                    #print(f"\n module name: {module} package:{package}")
 
                     imported = importlib.import_module(module)
                     for _, cls_obj in inspect.getmembers(imported, inspect.isclass):

@@ -133,7 +133,7 @@ def generate_apidocs(*args):
         + ["-o", output_path]
         + [module_path]
         + [os.path.join(module_path, p) for p in exclude_patterns]
-    )
+        , shell=True)
 
 
 def setup(app):

@@ -151,6 +151,7 @@ class MainProcessMonitor:
             if os.path.exists(rc_file):
                 os.remove(rc_file)
 
+
             rc = main_func(**kwargs)
         except ConfigError as ex:
             # already handled

@@ -646,7 +646,7 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
     GITS = ["git"]
     TAG_PREFIX_REGEX = "*"
     if sys.platform == "win32":
-        GITS = ["git.cmd", "git.exe"]
+        GITS = ["git.exe","git.cmd"]
         TAG_PREFIX_REGEX = r"\*"
 
     _, rc = runner(GITS, ["rev-parse", "--git-dir"], cwd=root,
@@ -1164,7 +1164,7 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
     GITS = ["git"]
     TAG_PREFIX_REGEX = "*"
     if sys.platform == "win32":
-        GITS = ["git.cmd", "git.exe"]
+        GITS = ["git.exe","git.cmd"]
         TAG_PREFIX_REGEX = r"\*"
 
     _, rc = runner(GITS, ["rev-parse", "--git-dir"], cwd=root,
@@ -1290,7 +1290,7 @@ def do_vcs_install(manifest_in, versionfile_source, ipy):
     """
     GITS = ["git"]
     if sys.platform == "win32":
-        GITS = ["git.cmd", "git.exe"]
+        GITS = ["git.exe","git.cmd"]
     files = [manifest_in, versionfile_source]
     if ipy:
         files.append(ipy)

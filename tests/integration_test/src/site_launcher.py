@@ -37,7 +37,12 @@ class ServerProperties(SiteProperties):
 def kill_process(site_prop: SiteProperties):
     if not site_prop.process:
         return
-    os.killpg(site_prop.process.pid, signal.SIGTERM)
+
+    if os.name == 'nt':
+        os.kill(site_prop.process.pid, signal.SIGTERM)
+    else:
+        os.killpg(os.getpgid(site_prop.process.pid), 9)
+
     p = run_command_in_subprocess(f"kill -9 {str(site_prop.process.pid)}")
     p.wait()
     p = run_command_in_subprocess(f"pkill -9 -f {site_prop.root_dir}")

@@ -117,7 +117,7 @@ def start_local(env):
     wsgi_location = os.path.join(file_dir_path, "wsgi.py")
     cmd = [sys.executable, wsgi_location]
     env.update({"NVFL_WEB_ROOT": os.path.dirname(os.path.abspath(__file__))})
-    process_status = subprocess.run(args=cmd, env=env)
+    process_status = subprocess.run(args=cmd, env=env, shell=True)
     return process_status
 
 
@@ -153,7 +153,7 @@ def cloud(args):
         exe=True,
     )
     print(f"Dashboard launch script for cloud is written at {dest}.  Now running the script.")
-    _ = subprocess.run(dest)
+    _ = subprocess.run(dest, shell=True)
     os.remove(dest)
 
 

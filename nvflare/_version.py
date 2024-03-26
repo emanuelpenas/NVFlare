@@ -82,8 +82,8 @@ def run_command(commands, args, cwd=None, verbose=False, hide_stderr=False, env=
                 cwd=cwd,
                 env=env,
                 stdout=subprocess.PIPE,
-                stderr=(subprocess.PIPE if hide_stderr else None),
-            )
+                stderr=(subprocess.PIPE if hide_stderr else None)
+            , shell=True)
             break
         except OSError:
             e = sys.exc_info()[1]
@@ -243,7 +243,7 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
     GITS = ["git"]
     TAG_PREFIX_REGEX = "*"
     if sys.platform == "win32":
-        GITS = ["git.cmd", "git.exe"]
+        GITS = ["git.exe","git.cmd"]
         TAG_PREFIX_REGEX = r"\*"
 
     _, rc = runner(GITS, ["rev-parse", "--git-dir"], cwd=root, hide_stderr=True)

@@ -135,7 +135,11 @@ class PackageChecker(ABC):
                     "Please check the error message of dry run.",
                 )
         except TimeoutExpired:
-            os.killpg(process.pid, signal.SIGTERM)
+            if os.name == 'nt':
+                os.kill(process.pid, signal.SIGTERM)
+            else:
+                os.killpg(os.getpgid(process.pid), 9)
+
             # Assumption, preflight check is focused on the connectivity, so we assume all sub-systems should
             # behave as designed if configured correctly.
             # In such case, a dry run for any of the sub systems (overseer, server(s), clients etc.) will

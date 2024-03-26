@@ -40,7 +40,10 @@ def check_parent_alive(parent_pid, stop_event: threading.Event):
         if stop_event.is_set() or not psutil.pid_exists(parent_pid):
             pid = os.getpid()
             kill_child_processes(pid)
-            os.killpg(os.getpgid(pid), 9)
+            if os.name == 'nt':
+                os.kill(pid, signal.SIGTERM)
+            else:
+                os.killpg(os.getpgid(pid), 9)
             break
         time.sleep(1)
 

@@ -17,7 +17,7 @@ import hashlib
 import logging
 import os
 import random
-import resource
+import psutil
 import threading
 import time
 from abc import ABC

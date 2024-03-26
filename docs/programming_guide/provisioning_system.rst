@@ -357,7 +357,7 @@ default builders. You can make this builder available and add it as a builder in
                     run_args = ["zip", "-rq", "-P", pw, dest_zip_file + ".zip", ".", "-i", "startup/*"]
                     os.chdir(dest_zip_file)
                     try:
-                        subprocess.run(run_args)
+                        subprocess.run(run_args, shell=True)
                         print(f"Password {pw} on {dir}.zip")
                     except FileNotFoundError:
                         raise RuntimeError("Unable to zip folders with password.  Maybe the zip utility is not installed.")

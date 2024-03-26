@@ -68,9 +68,8 @@ def run_command_in_subprocess(command):
     new_env["PYTHONPATH"] = python_path
     process = subprocess.Popen(
         shlex.split(command),
-        preexec_fn=os.setsid,
-        env=new_env,
-    )
+
+        env=new_env, shell=True)
     return process
 
 

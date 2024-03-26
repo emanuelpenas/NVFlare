@@ -15,6 +15,7 @@
 import logging
 import os
 import shlex
+import signal
 import subprocess
 import threading
 import time
@@ -190,7 +191,7 @@ class MultiProcessExecutor(Executor):
             )
             self.logger.info(f"multi_process_executor command: {command}")
             # use os.setsid to create new process group ID
-            self.exe_process = subprocess.Popen(shlex.split(command, " "), preexec_fn=os.setsid, env=os.environ.copy())
+            self.exe_process = subprocess.Popen(shlex.split(command, " "), shell=True, env=os.environ.copy())
 
             # send the init data to all the child processes
             cell.register_request_cb(
@@ -320,7 +321,10 @@ class MultiProcessExecutor(Executor):
         )
 
         try:
-            os.killpg(os.getpgid(self.exe_process.pid), 9)
+            if os.name == 'nt':
+                os.kill(self.exe_process.pid, signal.SIGTERM)
+            else:
+                os.killpg(os.getpgid(self.exe_process.pid), 9)
             self.logger.debug("kill signal sent")
         except Exception:
             pass
