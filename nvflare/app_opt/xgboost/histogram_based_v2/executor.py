@@ -24,17 +24,36 @@ class FedXGBHistogramExecutor(XGBExecutor):
         early_stopping_rounds,
         xgb_params: dict,
         data_loader_id: str,
-        verbose_eval=False,
-        use_gpus=False,
-        int_server_grpc_options=None,
-        req_timeout=100.0,
-        model_file_name="model.json",
+        sender_id: str = None,
+        verbose_eval: bool = False,
+        use_gpus: bool = False,
         metrics_writer_id: str = None,
-        in_process=True,
+        model_file_name="model.json",
+        in_process: bool = True,
+        req_timeout=100.0,
     ):
+        """
+
+        Args:
+            early_stopping_rounds: early stopping rounds
+            xgb_params: This dict is passed to `xgboost.train()` as the first argument `params`.
+                It contains all the Booster parameters.
+                Please refer to XGBoost documentation for details:
+                https://xgboost.readthedocs.io/en/stable/parameter.html
+            data_loader_id: the ID points to XGBDataLoader.
+            verbose_eval: verbose_eval in xgboost.train
+            use_gpus (bool): A convenient flag to enable gpu training, if gpu device is specified in
+                the `xgb_params` then this flag can be ignored.
+            metrics_writer_id: the ID points to a LogWriter, if provided, a MetricsCallback will be added.
+                Users can then use the receivers from nvflare.app_opt.tracking.
+            model_file_name (str): where to save the model.
+            in_process (bool): Specifies whether to start the `XGBRunner` in the same process or not.
+            req_timeout: Request timeout
+        """
         XGBExecutor.__init__(
             self,
             adaptor_component_id="",
+            sender_id=sender_id,
             req_timeout=req_timeout,
         )
         self.early_stopping_rounds = early_stopping_rounds
@@ -42,10 +61,12 @@ class FedXGBHistogramExecutor(XGBExecutor):
         self.data_loader_id = data_loader_id
         self.verbose_eval = verbose_eval
         self.use_gpus = use_gpus
-        self.int_server_grpc_options = int_server_grpc_options
         self.model_file_name = model_file_name
         self.in_process = in_process
         self.metrics_writer_id = metrics_writer_id
+
+        # do not let user specify int_server_grpc_options in this version - always use default
+        self.int_server_grpc_options = None
 
     def get_adaptor(self, fl_ctx: FLContext):
         runner = XGBClientRunner(
@@ -61,6 +82,7 @@ class FedXGBHistogramExecutor(XGBExecutor):
         adaptor = GrpcClientAdaptor(
             int_server_grpc_options=self.int_server_grpc_options,
             in_process=self.in_process,
+            req_timeout=self.req_timeout,
         )
         adaptor.set_runner(runner)
         return adaptor

@@ -22,6 +22,7 @@ from nvflare.apis.fl_context import FLContext
 from nvflare.apis.impl.controller import ClientTask, Controller, Task
 from nvflare.apis.shareable import ReturnCode, Shareable, make_reply
 from nvflare.apis.signal import Signal
+from nvflare.apis.utils.reliable_message import ReliableMessage
 from nvflare.app_opt.xgboost.histogram_based_v2.adaptor import XGBServerAdaptor
 from nvflare.app_opt.xgboost.histogram_based_v2.defs import Constant
 from nvflare.fuel.utils.validation_utils import check_number_range, check_object_type, check_positive_number, check_str
@@ -218,6 +219,16 @@ class XGBController(Controller):
             message_handle_func=self._process_client_done,
         )
 
+        ReliableMessage.enable(fl_ctx)
+        ReliableMessage.register_request_handler(
+            topic=Constant.TOPIC_XGB_REQUEST,
+            handler_f=self._process_xgb_request,
+        )
+        ReliableMessage.register_request_handler(
+            topic=Constant.TOPIC_CLIENT_DONE,
+            handler_f=self._process_client_done,
+        )
+
     def _trigger_stop(self, fl_ctx: FLContext, error=None):
         # first trigger the abort_signal to tell all components (mainly the controller's control_flow and adaptor)
         # that check this signal to abort.
@@ -283,6 +294,9 @@ class XGBController(Controller):
         # Problem is that even if the exit_code is not 0, we can't say the job failed.
         if exit_code == 0:
             self.log_info(fl_ctx, f"XGB client is done with exit code {exit_code}")
+        elif exit_code == Constant.EXIT_CODE_CANT_START_XGB:
+            self.log_error(fl_ctx, "XGB client failed to start")
+            self.system_panic("XGB client failed to start", fl_ctx)
         else:
             self.log_warning(fl_ctx, f"XGB client is done with exit code {exit_code}")
 
