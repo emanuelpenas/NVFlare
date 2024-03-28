@@ -1,5 +1,8 @@
-nvflare~=2.4.0rc
+#nvflare~=2.4.0rc
 numpy
 pandas
 matplotlib
 jupyterlab
+wget
+jupyter
+notebook
