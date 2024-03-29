@@ -802,15 +802,18 @@ def prepare_env(service_name, gpu_ids: Optional[List[int]], service_config: Dict
 
 def async_process(service_name, cmd_path, gpu_ids: Optional[List[int]], service_config: Dict):
     my_env = prepare_env(service_name, gpu_ids, service_config)
-    if my_env:
-        return subprocess.Popen("sh.exe "+cmd_path.split(" ")[0], env=my_env, shell=True,
-                          stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
+    if os.name=="nt":
+        if my_env:
+            subprocess.Popen(["bash",cmd_path.split(" ")], env=my_env, shell=True,
+                              stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
+        else:
+            subprocess.Popen("C:\\Program Files\\Git\\usr\\bin\\bash.exe /c"+cmd_path.split(" ")[0].replace('\\', '/'), shell=True,
+                                   stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
     else:
-        #return  subprocess.run(['C:\\cygwin64\\bin\mintty.exe','bash',cmd_path.split(" ")[0]], stdout=PIPE, stderr=PIPE, universal_newlines=True)
-
-        return subprocess.run(["start", "C:\\Program Files\\Git\\bin\\bash.exe",'c/'+cmd_path.split(" ")[0].replace('\\', '/')], shell=True,
-                               stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
-
+        if my_env:
+            subprocess.Popen(cmd_path.split(" "), env=my_env)
+        else:
+            subprocess.Popen(cmd_path.split(" "))
 
 def sync_process(service_name, cmd_path):
     my_env = os.environ.copy()
@@ -838,13 +841,11 @@ def _run_poc(
                 time.sleep(2)
             sync_process(service_name, cmd_path)
         elif service_name == service_config[SC.FLARE_SERVER]:
-            pp = async_process(service_name, cmd_path, None, service_config)
-            print(pp)
+            async_process(service_name, cmd_path, None, service_config)
         else:
             time.sleep(1)
             gpu_ids = gpu_assignments[service_name] if service_name in clients else None
-            pp = async_process(service_name, cmd_path, gpu_ids, service_config)
-            print(pp)
+            async_process(service_name, cmd_path, gpu_ids, service_config)
 
 
 def clean_poc(cmd_args):
