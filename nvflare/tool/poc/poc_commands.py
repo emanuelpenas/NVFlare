@@ -804,16 +804,20 @@ def async_process(service_name, cmd_path, gpu_ids: Optional[List[int]], service_
     my_env = prepare_env(service_name, gpu_ids, service_config)
     if os.name=="nt":
         if my_env:
-            subprocess.Popen(["bash",cmd_path.split(" ")], env=my_env, shell=True,
-                              stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
+            subprocess.run(["C:\Program Files\\Git\\usr\\bin\\mintty.exe",
+                            "-h", "always",
+                            "/bin/bash", "-l",
+                            "-e", "c:" + cmd_path.split(" ")[0].replace('\\', '/'),
+                            "&"],
+                           env=my_env,
+                           shell=True)
         else:
-            print("c:/"+cmd_path.split(" ")[0].replace('\\', '/'))
             subprocess.run(["C:\Program Files\\Git\\usr\\bin\\mintty.exe",
                                 "-h", "always",
                                 "/bin/bash", "-l",
-                                "-e", "c:"+cmd_path.split(" ")[0].replace('\\', '/')],
-                                shell=True,
-                                stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
+                                "-e", "c:"+cmd_path.split(" ")[0].replace('\\', '/'),
+                                "&"],
+                                shell=True)
     else:
         if my_env:
             subprocess.Popen(cmd_path.split(" "), env=my_env)
@@ -848,7 +852,7 @@ def _run_poc(
         elif service_name == service_config[SC.FLARE_SERVER]:
             async_process(service_name, cmd_path, None, service_config)
         else:
-            time.sleep(1)
+            time.sleep(2)
             gpu_ids = gpu_assignments[service_name] if service_name in clients else None
             async_process(service_name, cmd_path, gpu_ids, service_config)
 

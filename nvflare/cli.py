@@ -186,7 +186,6 @@ def run(prog_name):
         print(e)
         sys.exit(1)
     except Exception as e:
-        print(f"\nmeu teste Unable to handle command: {sub_cmd} due to: {e} \n")
         if hasattr(prog_args, "debug"):
             if prog_args.debug:
                 print(traceback.format_exc())
