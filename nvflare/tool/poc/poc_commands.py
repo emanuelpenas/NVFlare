@@ -807,8 +807,13 @@ def async_process(service_name, cmd_path, gpu_ids: Optional[List[int]], service_
             subprocess.Popen(["bash",cmd_path.split(" ")], env=my_env, shell=True,
                               stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
         else:
-            subprocess.Popen("C:\\Program Files\\Git\\usr\\bin\\bash.exe /c"+cmd_path.split(" ")[0].replace('\\', '/'), shell=True,
-                                   stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
+            print("c:/"+cmd_path.split(" ")[0].replace('\\', '/'))
+            subprocess.run(["C:\Program Files\\Git\\usr\\bin\\mintty.exe",
+                                "-h", "always",
+                                "/bin/bash", "-l",
+                                "-e", "c:"+cmd_path.split(" ")[0].replace('\\', '/')],
+                                shell=True,
+                                stdout=subprocess.PIPE, stderr=(subprocess.PIPE if False else None))
     else:
         if my_env:
             subprocess.Popen(cmd_path.split(" "), env=my_env)
