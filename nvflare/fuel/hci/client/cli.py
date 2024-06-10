@@ -39,6 +39,9 @@ from .api_spec import ServiceFinder
 from .api_status import APIStatus
 from .event import EventContext, EventHandler, EventPropKey, EventType
 
+import platform
+if platform.system() != 'Linux':
+    signal.SIGHUP = 1
 
 class _BuiltInCmdModule(CommandModule):
     def get_spec(self):
@@ -154,7 +157,7 @@ class AdminClient(cmd.Cmd, EventHandler):
             readline.set_history_length(cli_history_size)
 
         # signal.signal(signal.SIGUSR1, partial(self.session_signal_handler))
-        signal.signal(signal.SIGUSR1, self.session_signal_handler)
+       # signal.signal(signal.SIGUSR1, self.session_signal_handler)
 
     def handle_event(self, event_type: str, ctx: EventContext):
         if self.debug:

@@ -1,11 +1,12 @@
-FROM python:3.8
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install zip
-COPY nvflare /opt/NVFlare/nvflare
-COPY setup.py /opt/NVFlare/setup.py
-COPY versioneer.py /opt/NVFlare/versioneer.py
-COPY README.md /opt/NVFlare/README.md
-COPY setup.cfg /opt/NVFlare/setup.cfg
-WORKDIR /opt/NVFlare
-RUN pip install -U pip
-RUN pip install -e .
+ARG PYTORCH_IMAGE=nvcr.io/nvidia/pytorch:23.02-py3
+FROM ${PYTORCH_IMAGE}
 
+ARG NVF_VERSION=2.3
+ENV NVF_BRANCH=${NVF_VERSION}
+
+RUN python3 -m pip install -U pip
+RUN python3 -m pip install -U setuptools
+RUN python3 -m pip install nvflare
+
+WORKDIR /workspace/
+RUN git clone https://github.com/NVIDIA/NVFlare.git --branch ${NVF_BRANCH} --single-branch NVFlare

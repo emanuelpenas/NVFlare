@@ -1,5 +1,16 @@
 {
   "format_version": 2,
+   "servers": [
+    {
+      "name": "example_project",
+      "service": {
+        "target": "localhost:8002",
+        "scheme": "grpc"
+      },
+      "admin_host": "localhost",
+      "admin_port": 8003,
+    }
+  ],
   "workflows": [
     {
       "id": "fed_stats_controller",
